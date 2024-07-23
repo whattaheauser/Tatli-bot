@@ -1,13 +1,11 @@
-    const { Client, Intents, MessageEmbed, Collection } = require('discord.js');
+const { Client, Intents, MessageEmbed, Collection } = require('discord.js');
 const discord = require("discord.js");
 const botConfig = require("./botConfig.json");
 const ascii = require("ascii-table");
 const table = new ascii("Commands");
-table.setHeading("Command", "Status");
 const fs = require("fs");
-
 const { HfInference } = require('@huggingface/inference');
-
+const express = require('express');
 
 // Import the Bum.js module
 const bum = require("./commands/Bum");
@@ -25,13 +23,12 @@ for (const file of commandFiles) {
     }
 }
 console.log(table.toString());
+
 client.once("ready", () => {
     console.log(`TaTlİ BoT Açık✅✅✅✅✅`);
 });
 
 client.on("messageCreate", async message => {
-
-
     var prefix = botConfig.prefix;
     var messageArray = message.content.split(" ");
     var command = messageArray[0];
@@ -170,3 +167,26 @@ client.on("messageCreate", async message => {
 });
 
 client.login(process.env.token);
+
+// Express web server
+const app = express();
+const PORT = process.env.PORT || 3000;
+
+app.get('/', (req, res) => {
+    res.send('Selam Koray');
+});
+
+app.listen(PORT, () => {
+    console.log(`Web server running on port ${PORT}`);
+});
+
+// Restart bot on crash
+process.on('uncaughtException', (err) => {
+    console.error('There was an uncaught error', err);
+    process.exit(1); // Restart the bot
+});
+
+process.on('unhandledRejection', (reason, promise) => {
+    console.error('Unhandled Rejection at:', promise, 'reason:', reason);
+    process.exit(1); // Restart the bot
+});
